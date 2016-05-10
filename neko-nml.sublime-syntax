@@ -38,6 +38,11 @@ contexts:
     # \u3000
     - match: '　'
       scope: invalid.illegal.space-u3000
+
+    # Bool
+    - match: '\b(true|false)\b'
+      scope: constant.character.bool
+
     # var
     - match: '\bvar\b'
       scope: keyword.var
@@ -91,18 +96,20 @@ contexts:
     - match: '/\*'
       push: block_comment
     
+    # brace
     - match: '{{_BRACE_OPEN}}'
       push: todo_brace
     - match: '{{_BRACE_CLOSE}}'
       scope: invalid.illegal.brace-end
 
+     # brackets 
     - match: '{{_BRACKETS_OPEN}}'
       push: brackets
     - match: '{{_BRACKETS_CLOSE}}'
       scope: invalid.illegal.brackets-end
-#    - match: '\[<|>]'
-#      scope: entity.name.function
 
+#   - match: '\[<|>]'
+#      scope: entity.name.function
     # square brackets 
     - match: '{{_SQUARE_OPEN}}'
       push: square
@@ -125,19 +132,14 @@ contexts:
       captures:
         1: keyword.binop.assign
     # ":"
-    - match: '\:'
-      push: colon
+    - include: ii_binop_colon
 
 #    - match: '\b(xor|and|or)\b'
 #      scope: constant.character.bitop
 
-    # Bool
-    - match: '\b(true|false)\b'
-      scope: constant.character.bool
-
     - match: '\b(List)(\.)'
       captures:
-        1: support.function.C99
+        1: support.function.std
         2: keyword.control.dot
       push: support_list
 
@@ -159,7 +161,7 @@ contexts:
            error|throw|magic|assert|invalid_arg|ignore|fst|snd|nstring|compare|min|max|
            stream|stream_token|stream_junk|stream_pos|print|printf|sprintf
          )\b
-      scope: support.function.C99
+      scope: support.function.std
 
     # Numbers
     - match: '\b0x[0-9A-Fa-f]{1,8}\b'
@@ -187,9 +189,10 @@ contexts:
     - match: $
       pop: true
 
-
   def_type_block:
     - meta_scope: def.type.block
+    - match: '='
+      pop: true
     - match: '{{_BRACE_OPEN}}'
       set: def_type_brace
     - match: '\b{{_IDNET}}\b'
@@ -205,7 +208,6 @@ contexts:
       push: colon
     - match: '\bmutable\b'
       scope: storage.type.mutable
-
 
   def_function:
      - meta_scope: def.function
@@ -238,7 +240,7 @@ contexts:
     - match: '{{_BRACKETS_CLOSE}}'
       pop: true
     - match: ';'
-      scope: invalid.illegal.semicolon-end
+      scope: invalid.illegal.binop-semicolon
     - include: main
 
   todo_brace:
@@ -254,6 +256,8 @@ contexts:
     - meta_scope: square.block
     - match: '{{_SQUARE_CLOSE}}'
       pop: true
+    - match: ','
+      scope: invalid.illegal.binop-comma
     - include: main
 
   colon:
@@ -268,7 +272,7 @@ contexts:
       pop: true
     - match: '\b(?=[0-9])'
       pop: true
-    - match: (?:{{_MODIDENT}}\.)*('?{{_IDNET}})+
+    - match: ({{_MODIDENT}}\.)*('?{{_IDNET}})+
       scope: storage.type
     - match: '{{_MODIDENT}}'
       scope: invalid.illegal.type-name
@@ -278,46 +282,55 @@ contexts:
     - match: '{{_BRACKETS_CLOSE}}'
       pop: true
     # skip
-    - match: '[, \n\r\t]'
+    - match: '[, \n\r\t0-9.]'
     # invalid
     - match: '[;=:{}\[\]\\/|]'
       scope: invalid.illegal.type-binop
-    - include: colon
+    - include: colon  # rec
+
+  # for include
+  ii_binop_dot:
+    - match: '\.'
+      scope: keyword.control.dot
+  # for include
+  ii_binop_colon:
+    - match: ':'
+      push: colon
 
   # List method    
   support_list:
     - meta_scope: support.list.method
+    - include: ii_binop_dot
     - match: |-
          (?x)
          \b(
            iter|length|hd|tl|map|iter2|split|exists|mem|assoc|phys|find|rev_rec|rev|fold|append|
            concat|chop|all|none|nth|filter|array|sort
          )\b
-      scope: support.function.C99
+      scope: support.function.std
       pop: true
-    - match: '\b[a-zA-Z]+[a-zA-Z0-9_]*\b'
-      pop: true
-    - match: '(?={{_SPACES}})'
+#    - match: '\b[a-zA-Z]+[a-zA-Z0-9_]*\b'
+#      pop: true
+    - match: '(?=[^\w])'
       pop: true
 
+
+
   # support_io:
-  #   - meta_scope: support_io.line
+  #   - meta_scope: support.io.method
+  #   - include: ii_binop_dot
+  #    - match: |-
+  #         (?x)
+  #         \b(
+  #
+  #        )\b
   #   - match: '\b(create_out|write_char|write_byte|write_i8|output|write|write_i32|write_ui16|write_i16|write_ui24|flush|close_out|printf|create_in|read_char|read_byte|Overflow|input|read|read_buf|read_all|read_line|read_i32|read_ui16|read_ui24|read_i16|close_in|Eof|Closed|Blocked|file_open|file_contents|file_close|file_read|file_read_char|file_write|file_write_char|file_flush|file_input|read_file|read_string|file_output|write_file|write_string|file_stdin|file_stdout|file_stderr|stdin|stdout|stderr)\b'
-  #     scope: support.function.C99
+  #     scope: support.function.std
   #     pop: true
   #   - match: '\b(file|input|output)\b'
   #     scope: storage.type.io
   #     pop: true
   #   - match: '\b[a-zA-Z]+[a-zA-Z0-9_]*\b'
   #     pop: true
-  #   - match: '(?=[^a-zA-Z_])'
+  #   - match: '(?=[^\w])'
   #     pop: true
-
-
-######################
-# set 是先退出自已, 然后入栈, 而 push 则是正常进
-# meta_content_scope 和 meta_scope 会影响大小小括号的闭合, BUG???
-# meta_content_scope: 和 meta_scope 很像, 只是push后 meta_scope 的高亮不会应用于"进来时匹配的字符串"
-# meta_include_prototype: 几乎没什么人用到, 就是建一个名为 "prototype" 的字段, 每次 push 到字段时都会
-#  自动 include prototype 这个字段, 除非显示设置这个值为 false
-# 建议参考 st3 安装包下的 package 文件, 虽然大部分内容为二进制
