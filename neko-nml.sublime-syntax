@@ -1,0 +1,323 @@
+%YAML1.2
+---
+# See http://www.sublimetext.com/docs/3/syntax.html
+# http://tmtheme-editor.herokuapp.com/#!/editor/theme/Monokai
+name: NEKO-NML
+file_extensions: nml
+scope: source.nml
+
+variables:
+  # https://github.com/HaxeFoundation/neko/blob/master/src/nekoml/Lexer.nml
+  _BRACE_OPEN: '\{'
+  _BRACE_CLOSE: '\}'
+  _SQUARE_OPEN: '\['
+  _SQUARE_CLOSE: '\]'
+  _BRACKETS_OPEN: '\('
+  _BRACKETS_CLOSE: '\)'
+  _IDNET: '[a-z_][a-zA-Z0-9_]*'
+  _MODIDENT: '[A-Z][a-zA-Z0-9_]*'
+  _BINOP: '[-!=*/<>&|%+:]'
+  _NUMBER: '[0-9]'
+  _NUMBERS: '[0-9]+'
+  _SPACES: '[ \r\n\t]+'
+  # https://github.com/HaxeFoundation/neko/blob/master/src/nekoml/Ast.nml
+  _KEYWORD: '(var|if|else|function|try|catch|type|match|then|when|while|exception)'
+
+contexts:
+  main:
+    # Strings begin and end with quotes, and use backslashes as an escape
+    # character
+    - match: '"'
+      scope: double_quoted.begin
+      push: double_quoted_string
+    
+    # Char
+    - match: "'.'"
+      scope: constant.character.char
+
+    # \u3000
+    - match: '　'
+      scope: invalid.illegal.space-u3000
+    # var
+    - match: '\bvar\b'
+      scope: keyword.var
+      push:
+        - meta_scope: def.var.left
+        - match: '(?=(;|$|=))'
+          pop: true
+        - match: ':'
+          push: colon
+        - match: '{{_IDNET}}'
+        - match: '{{_MODIDENT}}'
+          scope: invalid.illegal.var-name
+
+    # exception
+    - match: '\bexception\b'
+      scope: keyword.exception
+      push:
+        - meta_scope: def.exception
+        - match: '(?=;|$|:)'
+          pop: true
+        - match: '\b{{_KEYWORD}}\b'
+          scope: invalid.illegal.exception-name
+
+    # type
+    - match: '\btype\b'
+      scope: keyword.type
+      push: def_type_block
+
+    - match: '\bfunction\b'
+      scope: keyword.function
+      push: def_function
+
+    - match: '\bopen\b'
+      scope: keyword.open
+      push:
+        - meta_scope: def.open
+        - match: '(?=$|;)'
+          pop: true
+        - match: '\b{{_MODIDENT}}\b'
+          scope: def.open.module
+        - match: '\b{{_IDNET}}\b'
+          scope: invalid.illegal.open-module-name
+        - match: '\.'
+          scope: keyword.control.dot
+
+    # Comments begin with a '//' and finish at the end of the line
+    - match: '//'
+      push: line_comment
+ 
+    # comment block
+    - match: '/\*'
+      push: block_comment
+    
+    - match: '{{_BRACE_OPEN}}'
+      push: todo_brace
+    - match: '{{_BRACE_CLOSE}}'
+      scope: invalid.illegal.brace-end
+
+    - match: '{{_BRACKETS_OPEN}}'
+      push: brackets
+    - match: '{{_BRACKETS_CLOSE}}'
+      scope: invalid.illegal.brackets-end
+#    - match: '\[<|>]'
+#      scope: entity.name.function
+
+    # square brackets 
+    - match: '{{_SQUARE_OPEN}}'
+      push: square
+    - match: '{{_SQUARE_CLOSE}}'
+      scope: invalid.illegal.square-end
+
+    # prevent match sigle &
+    - match: '&&|\*\*'
+    # "&ref"
+    - match: '&(?!\s)'
+      scope: keyword.binop.ref
+    # "*ref"  
+    - match: '\*(?!\s)'
+      scope: keyword.binop.point
+   
+    # "::"
+    - match: '\:\:'
+    # ":="
+    - match: '(:)(?=\=)'
+      captures:
+        1: keyword.binop.assign
+    # ":"
+    - match: '\:'
+      push: colon
+
+#    - match: '\b(xor|and|or)\b'
+#      scope: constant.character.bitop
+
+    # Bool
+    - match: '\b(true|false)\b'
+      scope: constant.character.bool
+
+    - match: '\b(List)(\.)'
+      captures:
+        1: support.function.C99
+        2: keyword.control.dot
+      push: support_list
+
+    # Keywords are if, else for and while.
+    # Note that blackslashes don't need to be escaped within single quoted
+    # strings in YAML. When using single quoted strings, only single quotes
+    # need to be escaped: this is done by using two single quotes next to each
+    # other.
+    - match: '\b(if|else|try|catch|match|then|when|while)\b'
+      scope: keyword.control
+
+    - match: '\b(None|Some|Exit|Not_found|Stream_error|Error|Assert_failure|Neko_error)\b'
+      scope: entity.name.function.enum
+ 
+    # crc/core/Core.nml
+    - match: |-
+         (?x)
+         \b(
+           error|throw|magic|assert|invalid_arg|ignore|fst|snd|nstring|compare|min|max|
+           stream|stream_token|stream_junk|stream_pos|print|printf|sprintf
+         )\b
+      scope: support.function.C99
+
+    # Numbers
+    - match: '\b0x[0-9A-Fa-f]{1,8}\b'
+      scope: constant.numeric.hex
+
+    - match: '\b([0-9]+\.?[0-9]*)|(\.[0-9]+)\b'
+      scope: constant.numeric
+
+    - match: '\.'
+      scope: keyword.control.dot
+
+    - match: '\b{{_MODIDENT}}(?!\.)\b'
+      scope: entity.name.function.enum
+
+  double_quoted_string:
+    - meta_scope: string.quoted.double
+    - match: '\\.|%[^"]'
+      scope: constant.character.escape
+    - match: '"'
+      scope: double_quoted.end
+      pop: true
+
+  line_comment:
+    - meta_scope: comment.line
+    - match: $
+      pop: true
+
+
+  def_type_block:
+    - meta_scope: def.type.block
+    - match: '{{_BRACE_OPEN}}'
+      set: def_type_brace
+    - match: '\b{{_IDNET}}\b'
+      scope: def.type.block.name
+    - match: '\b{{_MODIDENT}}\b'
+      scope: invalid.illegal.def-type-name
+
+  def_type_brace:
+    - meta_content_scope: def.type.block.brace
+    - match: '{{_BRACE_CLOSE}}'
+      pop: true
+    - match: '\:'
+      push: colon
+    - match: '\bmutable\b'
+      scope: storage.type.mutable
+
+
+  def_function:
+     - meta_scope: def.function
+     - match: '\brec\b'
+       scope: keyword.function.rec
+     - match: '\b{{_MODIDENT}}\b'
+       scope: invalid.illegal.def-function-name
+     - match: '\b{{_IDNET}}\b'
+       scope: nocolor.entity.name.function
+     - match: '{{_BRACKETS_OPEN}}'
+       set: def_function_args
+
+  def_function_args:
+     - meta_content_scope: def.function.args
+     - match: '{{_BRACKETS_CLOSE}}'
+       pop: true
+     - match: '{{_IDNET}}'
+       scope: variable.parameter.name
+     - match: '{{_MODIDENT}}'
+       scope: invalid.illegal.def-function-args-name
+     - include: main
+
+  block_comment:
+    - meta_scope: comment.block
+    - match: '\*/'
+      pop: true
+
+  brackets:
+    - meta_scope: brackets.block
+    - match: '{{_BRACKETS_CLOSE}}'
+      pop: true
+    - match: ';'
+      scope: invalid.illegal.semicolon-end
+    - include: main
+
+  todo_brace:
+    - meta_content_scope: brace.block
+    - match: '{{_BRACE_CLOSE}}'
+      pop: true
+    - match: '\|\|'
+    - match: '\|\s'
+      scope: keyword.binop.vertical
+    - include: main
+
+  square:
+    - meta_scope: square.block
+    - match: '{{_SQUARE_CLOSE}}'
+      pop: true
+    - include: main
+
+  colon:
+    - meta_scope: colon.block
+    - match: '{{_BRACKETS_OPEN}}'
+      push: colon_brackets
+    # char
+    - match: "(?='.')"
+      pop: true
+    # only support sigle line
+    - match: '(?=[=:;,\n\){}\[\]"])'
+      pop: true
+    - match: '\b(?=[0-9])'
+      pop: true
+    - match: (?:{{_MODIDENT}}\.)*('?{{_IDNET}})+
+      scope: storage.type
+    - match: '{{_MODIDENT}}'
+      scope: invalid.illegal.type-name
+
+  colon_brackets:
+    - meta_scope: colon.block.brackets
+    - match: '{{_BRACKETS_CLOSE}}'
+      pop: true
+    # skip
+    - match: '[, \n\r\t]'
+    # invalid
+    - match: '[;=:{}\[\]\\/|]'
+      scope: invalid.illegal.type-binop
+    - include: colon
+
+  # List method    
+  support_list:
+    - meta_scope: support.list.method
+    - match: |-
+         (?x)
+         \b(
+           iter|length|hd|tl|map|iter2|split|exists|mem|assoc|phys|find|rev_rec|rev|fold|append|
+           concat|chop|all|none|nth|filter|array|sort
+         )\b
+      scope: support.function.C99
+      pop: true
+    - match: '\b[a-zA-Z]+[a-zA-Z0-9_]*\b'
+      pop: true
+    - match: '(?={{_SPACES}})'
+      pop: true
+
+  # support_io:
+  #   - meta_scope: support_io.line
+  #   - match: '\b(create_out|write_char|write_byte|write_i8|output|write|write_i32|write_ui16|write_i16|write_ui24|flush|close_out|printf|create_in|read_char|read_byte|Overflow|input|read|read_buf|read_all|read_line|read_i32|read_ui16|read_ui24|read_i16|close_in|Eof|Closed|Blocked|file_open|file_contents|file_close|file_read|file_read_char|file_write|file_write_char|file_flush|file_input|read_file|read_string|file_output|write_file|write_string|file_stdin|file_stdout|file_stderr|stdin|stdout|stderr)\b'
+  #     scope: support.function.C99
+  #     pop: true
+  #   - match: '\b(file|input|output)\b'
+  #     scope: storage.type.io
+  #     pop: true
+  #   - match: '\b[a-zA-Z]+[a-zA-Z0-9_]*\b'
+  #     pop: true
+  #   - match: '(?=[^a-zA-Z_])'
+  #     pop: true
+
+
+######################
+# set 是先退出自已, 然后入栈, 而 push 则是正常进
+# meta_content_scope 和 meta_scope 会影响大小小括号的闭合, BUG???
+# meta_content_scope: 和 meta_scope 很像, 只是push后 meta_scope 的高亮不会应用于"进来时匹配的字符串"
+# meta_include_prototype: 几乎没什么人用到, 就是建一个名为 "prototype" 的字段, 每次 push 到字段时都会
+#  自动 include prototype 这个字段, 除非显示设置这个值为 false
+# 建议参考 st3 安装包下的 package 文件, 虽然大部分内容为二进制
