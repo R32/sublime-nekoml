@@ -1,9 +1,9 @@
 %YAML1.2
 ---
 # See http://www.sublimetext.com/docs/3/syntax.html
-# http://tmtheme-editor.herokuapp.com/#!/editor/theme/Monokai
 name: NEKO-NML
-file_extensions: nml
+file_extensions:
+  - nml
 scope: source.nml
 
 variables:
@@ -30,7 +30,7 @@ contexts:
     - match: '"'
       scope: double_quoted.begin
       push: double_quoted_string
-    
+
     # Char
     - match: "'.'"
       scope: constant.character.char
@@ -42,6 +42,82 @@ contexts:
     # Bool
     - match: '\b(true|false)\b'
       scope: constant.character.bool
+
+    - match: '\bList\b'
+      scope: support.function.mod
+      push: std_list
+
+    - match: '\bReflect\b'
+      scope: support.function.mod
+      push: std_reflect
+
+    - match: '\bArgs\b'
+      scope: support.function.mod
+      push: std_args
+
+    - match: '\bBuffer\b'
+      scope: support.function.mod
+      push: std_buffer
+
+    - match: '\bSys\b'
+      scope: support.function.mod
+      push: std_sys
+
+    - match: '\bArray\b'
+      scope: support.function.mod
+      push: std_array
+
+    - match: '\bHashtbl\b'
+      scope: support.function.mod
+      push: std_hashtbl
+
+    - match: '\bIO\b'
+      scope: support.function.mod
+      push: std_io
+
+    - match: '\bNet\b'
+      scope: support.function.mod
+      push: std_net
+
+    - match: '\bString\b'
+      scope: support.function.mod
+      push: std_string
+
+    - match: '\bXml\b'
+      scope: support.function.mod
+      push: std_xml
+
+    - match: '\bZip\b'
+      scope: support.function.mod
+      push: std_zip
+
+    - match: '\bSTACK\b'
+      scope: support.function.mod
+      push: std_stack
+
+    - match: '\bSet\b'
+      scope: support.function.mod
+      push: std_set
+
+    - match: '\bRegexp\b'
+      scope: support.function.mod
+      push: std_regexp
+
+    - match: '\bMath\b'
+      scope: support.function.mod
+      push: std_math
+
+    - match: '\bMap\b'
+      scope: support.function.mod
+      push: std_map
+
+    - match: '\bLexer\b'
+      scope: support.function.mod
+      push: std_lexer
+
+    - match: '\bLexEngine\b'
+      scope: support.function.mod
+      push: std_lexEngine
 
     # var
     - match: '\bvar\b'
@@ -89,20 +165,17 @@ contexts:
           scope: keyword.control.dot
 
     # Comments begin with a '//' and finish at the end of the line
-    - match: '//'
-      push: line_comment
- 
+    - include: ii_binop_comment_line
     # comment block
-    - match: '/\*'
-      push: block_comment
-    
+    - include: ii_binop_comment_block
+
     # brace
     - match: '{{_BRACE_OPEN}}'
       push: todo_brace
     - match: '{{_BRACE_CLOSE}}'
       scope: invalid.illegal.brace-end
 
-     # brackets 
+     # brackets
     - match: '{{_BRACKETS_OPEN}}'
       push: brackets
     - match: '{{_BRACKETS_CLOSE}}'
@@ -110,7 +183,7 @@ contexts:
 
 #   - match: '\[<|>]'
 #      scope: entity.name.function
-    # square brackets 
+    # square brackets
     - match: '{{_SQUARE_OPEN}}'
       push: square
     - match: '{{_SQUARE_CLOSE}}'
@@ -121,10 +194,10 @@ contexts:
     # "&ref"
     - match: '&(?!\s)'
       scope: keyword.binop.ref
-    # "*ref"  
+    # "*ref"
     - match: '\*(?!\s)'
       scope: keyword.binop.point
-   
+
     # "::"
     - match: '\:\:'
     # ":="
@@ -136,13 +209,8 @@ contexts:
 
 #    - match: '\b(xor|and|or)\b'
 #      scope: constant.character.bitop
-
-    - match: '\b(List)(\.)'
-      captures:
-        1: support.function.std
-        2: keyword.control.dot
-      push: support_list
-
+    - match: '\b(as|and|xor|or)\b'
+      scope: variable.parameter.name
     # Keywords are if, else for and while.
     # Note that blackslashes don't need to be escaped within single quoted
     # strings in YAML. When using single quoted strings, only single quotes
@@ -153,7 +221,7 @@ contexts:
 
     - match: '\b(None|Some|Exit|Not_found|Stream_error|Error|Assert_failure|Neko_error)\b'
       scope: entity.name.function.enum
- 
+
     # crc/core/Core.nml
     - match: |-
          (?x)
@@ -191,7 +259,7 @@ contexts:
 
   def_type_block:
     - meta_scope: def.type.block
-    - match: '='
+    - match: ';|='
       pop: true
     - match: '{{_BRACE_OPEN}}'
       set: def_type_brace
@@ -201,13 +269,18 @@ contexts:
       scope: invalid.illegal.def-type-name
 
   def_type_brace:
-    - meta_content_scope: def.type.block.brace
+    - meta_scope: def.type.block.brace
+    - include: ii_binop_comment_line
+    - include: ii_binop_comment_block
     - match: '{{_BRACE_CLOSE}}'
       pop: true
-    - match: '\:'
-      push: colon
-    - match: '\bmutable\b'
-      scope: storage.type.mutable
+    - include: ii_binop_colon
+    - match: '(\bmutable\b)\s+(\b{{_IDNET}}\b)'
+      scope: variable.parameter.mutable
+    - match: '\b{{_MODIDENT}}\b'
+      scope: entity.name.function.enum
+    - match: '\b{{_IDNET}}\b'
+      scope: nocolor.entity.name.function
 
   def_function:
      - meta_scope: def.function
@@ -221,12 +294,12 @@ contexts:
        set: def_function_args
 
   def_function_args:
-     - meta_content_scope: def.function.args
+     - meta_scope: def.function.args
      - match: '{{_BRACKETS_CLOSE}}'
        pop: true
-     - match: '{{_IDNET}}'
+     - match: '\b{{_IDNET}}\b'
        scope: variable.parameter.name
-     - match: '{{_MODIDENT}}'
+     - match: '\b{{_MODIDENT}}\b'
        scope: invalid.illegal.def-function-args-name
      - include: main
 
@@ -244,7 +317,7 @@ contexts:
     - include: main
 
   todo_brace:
-    - meta_content_scope: brace.block
+    - meta_scope: brace.block
     - match: '{{_BRACE_CLOSE}}'
       pop: true
     - match: '\|\|'
@@ -256,7 +329,7 @@ contexts:
     - meta_scope: square.block
     - match: '{{_SQUARE_CLOSE}}'
       pop: true
-    - match: ','
+    - match: '(?=,)'
       scope: invalid.illegal.binop-comma
     - include: main
 
@@ -273,7 +346,7 @@ contexts:
     - match: '\b(?=[0-9])'
       pop: true
     - match: ({{_MODIDENT}}\.)*('?{{_IDNET}})+
-      scope: storage.type
+      scope: support.type
     - match: '{{_MODIDENT}}'
       scope: invalid.illegal.type-name
 
@@ -282,55 +355,244 @@ contexts:
     - match: '{{_BRACKETS_CLOSE}}'
       pop: true
     # skip
-    - match: '[, \n\r\t0-9.]'
+    - match: '[, \n\t0-9.]'
     # invalid
     - match: '[;=:{}\[\]\\/|]'
       scope: invalid.illegal.type-binop
     - include: colon  # rec
 
   # for include
-  ii_binop_dot:
-    - match: '\.'
-      scope: keyword.control.dot
-  # for include
   ii_binop_colon:
     - match: ':'
       push: colon
 
-  # List method    
-  support_list:
-    - meta_scope: support.list.method
-    - include: ii_binop_dot
-    - match: |-
-         (?x)
-         \b(
-           iter|length|hd|tl|map|iter2|split|exists|mem|assoc|phys|find|rev_rec|rev|fold|append|
-           concat|chop|all|none|nth|filter|array|sort
-         )\b
-      scope: support.function.std
-      pop: true
-#    - match: '\b[a-zA-Z]+[a-zA-Z0-9_]*\b'
-#      pop: true
+  ii_binop_comment_line:
+    - match: '//'
+      push: line_comment
+
+  ii_binop_comment_block:
+    - match: '/\*'
+      push: block_comment
+
+  ########## STD MODULE ##########
+  dot2method:
+    - match: '\.'
+      scope: support.function
     - match: '(?=[^\w])'
       pop: true
 
+  std_list:
+    - meta_scope: std.list
+    - include: dot2method
+    - match: |-
+        (?x)
+        \b(
+          iter|length|hd|tl|map|iter2|split|exists|mem|assoc|phys|find|rev_rec|rev|fold|append|
+          concat|chop|all|none|nth|filter|array|sort
+        )\b
+      scope: support.function
 
+  std_reflect:
+    - meta_scope: std.reflect
+    - include: dot2method
+    - match: '\b(neko_object|neko_abstract|neko_function|neko_array|neko_loader|module|value)\b'
+      scope: support.type
+    - match: |-
+        (?x)
+        \b(
+          value|neko_value|asize|aget|aset|module_read|loader_path|module_read_path|
+          module_name|module_execute|module_exports|module_loader|
+          module_globals_count|module_get_global|module_set_global|module_code_size
+        )\b
+      scope: support.function
 
-  # support_io:
-  #   - meta_scope: support.io.method
-  #   - include: ii_binop_dot
-  #    - match: |-
-  #         (?x)
-  #         \b(
-  #
-  #        )\b
-  #   - match: '\b(create_out|write_char|write_byte|write_i8|output|write|write_i32|write_ui16|write_i16|write_ui24|flush|close_out|printf|create_in|read_char|read_byte|Overflow|input|read|read_buf|read_all|read_line|read_i32|read_ui16|read_ui24|read_i16|close_in|Eof|Closed|Blocked|file_open|file_contents|file_close|file_read|file_read_char|file_write|file_write_char|file_flush|file_input|read_file|read_string|file_output|write_file|write_string|file_stdin|file_stdout|file_stderr|stdin|stdout|stderr)\b'
-  #     scope: support.function.std
-  #     pop: true
-  #   - match: '\b(file|input|output)\b'
-  #     scope: storage.type.io
-  #     pop: true
-  #   - match: '\b[a-zA-Z]+[a-zA-Z0-9_]*\b'
-  #     pop: true
-  #   - match: '(?=[^\w])'
-  #     pop: true
+  std_args:
+    - meta_scope: std.args
+    - include: dot2method
+    - match: '\b((argtype|Invalid)|(help|parse_args))\b'
+      captures:
+        2: support.type
+        3: support.function
+
+  std_buffer:
+    - meta_scope: std.buffer
+    - include: dot2method
+    - match: '\b(t|create|add|reset|string|add_sub|add_char)\b'
+      scope: support.function
+      #
+  std_sys:
+    - meta_scope: std.sys
+    - include: dot2method
+    - match: '\bversion\b'
+      scope: support.type
+    - match: |-
+        (?x)
+        \b(
+          without_extension|extension|without_dir|args|exit|exists|get_env|
+          put_env|get_cwd|set_cwd|executable_path|is_directory|read_directory
+        )\b
+      scope: support.function
+
+  std_array:
+    - meta_scope: std.array
+    - include: dot2method
+    - match: |-
+        (?x)
+        \b(
+          string|length|create|add|get|set|make|init|iter|iteri|map|
+          sort|list|append|sub|blit|index
+        )\b
+      scope: support.function
+
+  std_hashtbl:
+    - meta_scope: std.hashtbl
+    - include: dot2method
+    - match: '\b(t|hash|create|length|find|exists|add|remove|replace|iter)\b'
+      scope: support.function
+
+  std_io:
+    - meta_scope: std.io
+    - include: dot2method
+    - match: |-
+        (?x)
+        \b(
+          file_stdin|file_stdout|file_stderr|stdin|stdout|stderr
+        )\b
+      scope: variable.parameter.name
+    - match: |-
+        (?x)
+        \b(
+          file|input|output|Overflow|Eof|Closed|Blocked
+        )\b
+      scope: support.type
+    - match: |-
+        (?x)
+        \b(
+          file_open|file_contents|file_close|file_read|file_read_char|file_write|file_write_char|file_flush|
+          file_input|read_file|read_string|file_output|write_file|write_string|
+          create_in|read_char|read_byte|input|read|read_buf|read_all|read_line|read_i32|
+          read_ui16|read_ui24|read_i16|close_in|
+          create_out|write_char|write_byte|write_i8|output|write|write_i32|write_ui16|
+          write_i16|write_ui24|flush|close_out|printf
+        )\b
+      scope: support.function
+
+  std_net:
+    - meta_scope: std.net
+    - include: dot2method
+    - match: '\b(socket|ip)\b'
+      scope: support.type
+    - match: |-
+        (?x)
+        \b(
+          socket_new|socket_close|socket_send_char|socket_send|socket_recv|socket_recv_char|socket_write|socket_read|
+          socket_connect|socket_listen|socket_bind|socket_accept|socket_peer|socket_host|socket_set_timeout|
+          host_resolve|host_to_string|host_local|url_encode|url_decode|socket_select|socket_io|start_server
+        )\b
+      scope: support.function
+
+  std_string:
+    - meta_scope: std.string
+    - include: dot2method
+    - match: |-
+        (?x)
+        \b(
+          make|create|length|get|set|blit|sub|find|split|concat|is_printable|escape_char|
+          escape|unescape|lowercase|uppercase|serialize|unserialize
+        )\b
+      scope: support.function
+
+  std_xml:
+    - meta_scope: std.net
+    - include: dot2method
+    - match: '\b(t|Error)\b'
+      scope: support.type
+    - match: '\b(parse|is_node|is_pcdata|is_cdata|firstNode|nodes|node_name|node_text|attrib|write|to_string)\b'
+      scope: support.function
+
+  std_zip:
+    - meta_scope: std.zip
+    - include: dot2method
+    - match: '\b(in|out|flush|result)\b'
+      scope: support.type
+    - match: |-
+        (?x)
+        \b(
+          init|output|output_bound|output_end|output_buffer|input|input_buffer|input_end|
+          output_set_flush_mode|input_set_flush_mode|compress|uncompress
+        )\b
+      scope: support.function
+
+  std_stack:
+    - meta_scope: std.stack
+    - include: dot2method
+    - match: '\b(stack_item|stack)\b'
+      scope: support.type
+    - match: '\b(call|exc|dump|print)\b'
+      scope: support.function
+
+  std_set:
+    - meta_scope: std.set
+    - include: dot2method
+    # - match: '\b(set|t)\b'
+    #   scope: support.type
+      # height|make|bal|remove_min_elt|min_elt|merge|add_loop|join|concat|split
+    - match: '\b(add|create|empty|is_empty|exists|remove|union|inter|diff|iter)\b'
+      scope: support.function
+
+  std_regexp:
+    - meta_scope: std.regexp
+    - include: dot2method
+    # - match: '\b(t)\b'
+    #   scope: support.type
+    - match: '\b(build|find|matched|matched_pos|split)\b'
+      scope: support.function
+
+  std_math:
+    - meta_scope: std.math
+    - include: dot2method
+    - match: '\bpi\b'
+      scope: variable.parameter.name
+    - match: |-
+        (?x)
+        \b(
+          atan2|pow|abs|iabs|ceil|floor|round|fceil|ffloor|fround|fint|
+          sqrt|atan|cos|sin|tan|log|exp|acos|asin
+        )\b
+      scope: support.function
+
+  std_map:
+    - meta_scope: std.map
+    - include: dot2method
+    # - match: '\b(map|t)\b'
+    #   scope: support.type
+    - match: '\b(create|empty|is_empty|add|find|remove|exists|iter|map|fold)\b'
+      scope: support.function
+
+  std_lexer:
+    - meta_scope: std.lexer
+    - include: dot2method
+    - match: '\bnull_pos\b'
+      scope: variable.parameter.name
+    - match: '\b(cur|pos|t|tables|Invalid_rule)\b'
+      scope: support.type
+    - match: '\b(source|line|punion|create|data|set|input|curpos|current|read|inc_line|char|token|build|empty)\b'
+      scope: support.function
+
+  std_lexEngine:
+    - meta_scope: std.lexEngine
+    - include: dot2method
+    - match: '\b(charset|node|state|t|InvalidRegexp)\b'
+      scope: support.type
+    - match: '\b(max_code|cempty|call)\b'
+      scope: variable.parameter.name
+    - match: |-
+        (?x)
+        \b(
+          is_empty|cunion|ccomplement|cinter|cdiff|
+          node|add_node|add_nodes|nodes|
+          transitions|determinize|
+          make_trans|make_tables|
+          single|group|invalid|escaped|plus|star|opt|next|parse
+        )\b
+      scope: support.function
