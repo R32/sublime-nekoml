@@ -129,6 +129,7 @@ contexts:
         - match: ':'
           push: colon
         - match: '{{_IDNET}}'
+          scope: def.var.name
         - match: '{{_MODIDENT}}'
           scope: invalid.illegal.var-name
 
@@ -283,7 +284,7 @@ contexts:
     - match: '\b{{_MODIDENT}}\b'
       scope: entity.name.function.enum
     - match: '\b{{_IDNET}}\b'
-      scope: nocolor.entity.name.function
+      scope: type.record.field
 
   def_function:
      - meta_scope: def.function
@@ -292,7 +293,7 @@ contexts:
      - match: '\b{{_MODIDENT}}\b'
        scope: invalid.illegal.def-function-name
      - match: '\b{{_IDNET}}\b'
-       scope: nocolor.entity.name.function
+       scope: def.function.name
      - match: '{{_BRACKETS_OPEN}}'
        set: def_function_args
 
