@@ -226,6 +226,7 @@ contexts:
     - match: |-
          (?x)
          \b(
+           int|float|ord|chr|string|
            error|throw|magic|assert|invalid_arg|ignore|fst|snd|nstring|compare|min|max|
            stream|stream_token|stream_junk|stream_pos|print|printf|sprintf
          )\b
@@ -235,7 +236,7 @@ contexts:
     - match: '\b0x[0-9A-Fa-f]{1,8}\b'
       scope: constant.numeric.hex
 
-    - match: '\b([0-9]+\.?[0-9]*)|(\.[0-9]+)\b'
+    - match: '-?\b([0-9]+\.?[0-9]*)|(\.[0-9]+)\b'
       scope: constant.numeric
 
     - match: '\.'
@@ -259,7 +260,9 @@ contexts:
 
   def_type_block:
     - meta_scope: def.type.block
-    - match: ';|='
+    - match: ';|=|$'
+      pop: true
+    - match: '(?=\()'
       pop: true
     - match: '{{_BRACE_OPEN}}'
       set: def_type_brace
@@ -376,8 +379,11 @@ contexts:
 
   ########## STD MODULE ##########
   dot2method:
+    - match: '\.\.+'
+      scope: invalid.illegal.dot
+      pop: true
     - match: '\.'
-      scope: support.function
+      scope: support.function.dot
     - match: '(?=[^\w])'
       pop: true
 
