@@ -2,7 +2,7 @@
 <plist version="1.0">
 <dict>
 	<key>scope</key>
-	<string>def.var.name, def.function.name, entity.name.function.enum, type.record.field</string>
+	<string>var.name, function.name, exception.name, type.variant, type.record.field</string>
 	<key>settings</key>
 	<dict>
 		<key>showInIndexedSymbolList</key>

@@ -1,6 +1,7 @@
 %YAML1.2
 ---
 # See http://www.sublimetext.com/docs/3/syntax.html
+# color scope http://tmtheme-editor.herokuapp.com/#!/editor/theme/Monokai
 name: NEKO-NML
 file_extensions:
   - nml
@@ -123,47 +124,53 @@ contexts:
     - match: '\bvar\b'
       scope: keyword.var
       push:
-        - meta_scope: def.var.left
+        - meta_scope: var.left
         - match: '(?=(;|$|=))'
           pop: true
         - match: ':'
           push: colon
         - match: '{{_IDNET}}'
-          scope: def.var.name
+          scope: var.name
         - match: '{{_MODIDENT}}'
           scope: invalid.illegal.var-name
 
     # exception
-    - match: '\bexception\b'
-      scope: keyword.exception
+    - match: '\b(exception)\s+(?:({{_IDNET}})|({{_MODIDENT}}))'
+      captures:
+        1: keyword.exception
+        2: invalid.illegal.exception-type-name
+        3: exception.name
       push:
-        - meta_scope: def.exception
         - match: '(?=;|$|:)'
           pop: true
-        - match: '\b{{_KEYWORD}}\b'
-          scope: invalid.illegal.exception-name
 
-    # type
-    - match: '\btype\b'
-      scope: keyword.type
+    # type normal
+    - match: '\b(type)\s+(?:({{_IDNET}})|({{_MODIDENT}}))'
+      captures:
+        1: keyword.type
+        2: type.name
+        3: invalid.illegal.def-type-name
+      push: def_type_block
+
+    # type 'a sss;,  type ('a, 'b) ttt
+    - match: "\\b(type)\\s+(?:['abc \\t)(,]+)(?:({{_IDNET}})|({{_MODIDENT}}))"
+      captures:
+        1: keyword.type
+        2: type.name
+        3: invalid.illegal.def-type-name
       push: def_type_block
 
     - match: '\bfunction\b'
       scope: keyword.function
       push: def_function
 
-    - match: '\bopen\b'
-      scope: keyword.open
-      push:
-        - meta_scope: def.open
-        - match: '(?=$|;)'
-          pop: true
-        - match: '\b{{_MODIDENT}}\b'
-          scope: def.open.module
-        - match: '\b{{_IDNET}}\b'
-          scope: invalid.illegal.open-module-name
-        - match: '\.'
-          scope: keyword.control.dot
+    - match: '\b(open)\s+(?:({{_MODIDENT}})|({{_IDNET}}))(?:\.(?:({{_MODIDENT}})|({{_IDNET}})))*'
+      captures:
+        1: keyword.open
+        2: open.path
+        3: invalid.illegal.open-Path
+        4: open.path.mod
+        5: invalid.illegal.open.path.mod
 
     # Comments begin with a '//' and finish at the end of the line
     - include: ii_binop_comment_line
@@ -220,8 +227,8 @@ contexts:
     - match: '\b(if|else|try|catch|match|then|when|while)\b'
       scope: keyword.control
 
-    - match: '\b(None|Some|Exit|Not_found|Stream_error|Error|Assert_failure|Neko_error)\b'
-      scope: entity.name.function.enum
+    - match: '\s(None|Some|Exit|Not_found|Stream_error|Error|Assert_failure|Neko_error)\b'
+      scope: entity.other.inherited-class
 
     # crc/core/Core.nml
     - match: |-
@@ -243,8 +250,8 @@ contexts:
     - match: '\.'
       scope: keyword.control.dot
 
-    - match: '\b{{_MODIDENT}}(?!\.)\b'
-      scope: entity.name.function.enum
+    - match: '\s{{_MODIDENT}}(?!\.)\b'
+      scope: entity.other.inherited-class
 
   double_quoted_string:
     - meta_scope: string.quoted.double
@@ -267,10 +274,6 @@ contexts:
       pop: true
     - match: '{{_BRACE_OPEN}}'
       set: def_type_brace
-    - match: '\b{{_IDNET}}\b'
-      scope: def.type.block.name
-    - match: '\b{{_MODIDENT}}\b'
-      scope: invalid.illegal.def-type-name
 
   def_type_brace:
     - meta_scope: def.type.block.brace
@@ -282,7 +285,7 @@ contexts:
     - match: '(\bmutable\b)\s+(\b{{_IDNET}}\b)'
       scope: variable.parameter.mutable
     - match: '\b{{_MODIDENT}}\b'
-      scope: entity.name.function.enum
+      scope: type.variant
     - match: '\b{{_IDNET}}\b'
       scope: type.record.field
 
@@ -293,7 +296,7 @@ contexts:
      - match: '\b{{_MODIDENT}}\b'
        scope: invalid.illegal.def-function-name
      - match: '\b{{_IDNET}}\b'
-       scope: def.function.name
+       scope: function.name
      - match: '{{_BRACKETS_OPEN}}'
        set: def_function_args
 
