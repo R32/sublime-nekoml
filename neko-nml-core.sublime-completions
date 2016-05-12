@@ -1,0 +1,100 @@
+{
+  "scope": "source.nml",
+
+  "completions": [
+  	// sort in front
+  	{ "trigger": "None\t type 'a option", "contents": "None$0"},
+	{ "trigger": "Some('a)\t type 'a option", "contents": "Some($1)$0"},
+	{ "trigger": "print('a):void\t function", "contents": "print($1)$0"},
+	{ "trigger": "printf(fmt: 'a format, p: 'a):void\t function", "contents": "printf(\"$1\")$0"},
+
+	// module
+	{ "trigger": "List\t module", "contents": "List$0"},
+	{ "trigger": "Sys\t module", "contents": "Sys$0"},
+	{ "trigger": "Net\t module", "contents": "Net$0"},
+	{ "trigger": "Hashtbl\t module", "contents": "Hashtbl$0"},
+	{ "trigger": "IO\t module", "contents": "IO$0"},
+	{ "trigger": "String\t module", "contents": "String$0"},
+	{ "trigger": "Args\t module", "contents": "Args$0"},
+	{ "trigger": "Array\t module", "contents": "Array$0"},
+	{ "trigger": "Buffer\t module", "contents": "Buffer$0"},
+	{ "trigger": "LexEngine\t module", "contents": "LexEngine$0"},
+	{ "trigger": "Lexer\t module", "contents": "Lexer$0"},
+	{ "trigger": "Map\t module", "contents": "Map$0"},
+	{ "trigger": "Math\t module", "contents": "Math$0"},
+	{ "trigger": "Reflect\t module", "contents": "Reflect$0"},
+	{ "trigger": "Regexp\t module", "contents": "Regexp$0"},
+	{ "trigger": "Set\t module", "contents": "Set$0"},
+	{ "trigger": "Stack\t module", "contents": "Stack$0"},
+	{ "trigger": "Xml\t module", "contents": "Xml$0"},
+	{ "trigger": "Zip\t module", "contents": "Zip$0"},
+
+	// exception
+	{ "trigger": "Neko_error\t exception: neko_value", "contents": "Neko_error $0"},
+	{ "trigger": "Invalid_argument\t exception: string", "contents": "Invalid_argument \"${0:invalid}\"$0"},
+	{ "trigger": "Assert_failure\t exception: (string, int)", "contents": "Assert_failure (\"${1:fail..}\", ${2:-1})$0"},
+	{ "trigger": "Error\t exception: string", "contents": "Error \"${1:err_msg}\"$0"},
+	{ "trigger": "Stream_error\t exception", "contents": "Stream_error$0"},
+	{ "trigger": "Not_found\t exception: string", "contents": "Not_found$0"},
+	{ "trigger": "Exit\t exception: string", "contents": "Exit"},
+
+	// core function
+	{ "trigger": "fst(tuple:('a, _)):'a\t function", "contents": "fst($0)"},
+	{ "trigger": "snd(tuple:(_, 'a)):'a\t function", "contents": "snd($0)"},
+	{ "trigger": "int(string):int\t function", "contents": "int($1)$0"},
+	{ "trigger": "float(string):float\t function", "contents": "float($1)$0"},
+	{ "trigger": "ord(char):int\t function", "contents": "ord($1)$0"},
+	{ "trigger": "chr(int):char\t function", "contents": "chr($1)$0"},
+	{ "trigger": "string('a):string\t function", "contents": "string($1)$0"},
+	{ "trigger": "nstring(nekovalue: 'a):string\t function", "contents": "nstring($1)$0"},
+	{ "trigger": "compare(x: 'a, y: 'a):int\t function", "contents": "compare(${1:x},${2:y})$0"},
+	{ "trigger": "min(x: 'a, y: 'a):'a\t function", "contents": "min(${1:x},${2:y})$0"},
+	{ "trigger": "max(x: 'a, y: 'a):'a\t function", "contents": "max(${1:x},${2:y})$0"},
+	{ "trigger": "sprintf(fmt: 'a format, p: 'a):string\t function", "contents": "sprintf(\"$1\")$0"},
+
+	{ "trigger": "stream(f: void->'a):'a stream\t function", "contents": "stream($1)$0"},
+	{ "trigger": "stream_token(s: 'a stream, x: int):'a\t function", "contents": "stream_token($1)$0"},
+	{ "trigger": "stream_junk(s: 'a stream, x: int):void\t function", "contents": "stream_junk($1)$0"},
+	{ "trigger": "stream_pos(s: 'a stream):int\t function", "contents": "stream_pos($1)$0"},
+	{ "trigger": "neko(string):'a\t function", "contents": "neko(\"$1\")$0"},
+	{ "trigger": "magic(neko_value):'a\t function", "contents": "magic($1)$0"},
+	{ "trigger": "throw(error):'a\t function", "contents": "throw Error(\"${1:err_msg}\")$0"},
+	{ "trigger": "assert(file:string, line:int):'a\t function", "contents": "assert(\"${1:fail}\", ${2:0})$0"},
+	{ "trigger": "invalid_arg(fun: string):'a\t function", "contents": "invalid_arg(\"${1:arg1}\")$0"},
+	{ "trigger": "error(string):'a\t function", "contents": "error(\"{1:err_msg}\")$0"},
+	{ "trigger": "ignore('a):void\t function", "contents": "ignore($1)$0"},
+
+	// recoder mutable
+	{ "trigger": "mutable \tsnippet", "contents": "mutable ${1:name}: ${2:int};$0"},
+
+	// type
+	{ "trigger": "true\t", "contents": "true$0"},
+	{ "trigger": "false\t", "contents": "false$0"},
+	{ "trigger": "bool\t type", "contents": "bool$0"},
+	{ "trigger": "void\t type", "contents": "void$0"},
+	{ "trigger": "neko_value\t type", "contents": "neko_value$0"},
+	{ "trigger": "int\t type", "contents": "int$0"},
+	{ "trigger": "int32\t type", "contents": "int32$0"},
+	{ "trigger": "float\t type", "contents": "float$0"},
+	{ "trigger": "char\t type", "contents": "char$0"},
+	{ "trigger": "string\t type", "contents": "string$0"},
+	{ "trigger": "error\t type", "contents": "error$0"},
+	{ "trigger": "array\t 'a type", "contents": "array$0"},
+	{ "trigger": "list\t 'a type", "contents": "list$0"},
+	{ "trigger": "ref\t 'a type", "contents": "ref$0"},
+	{ "trigger": "format\t 'a type", "contents": "format$0"},
+	{ "trigger": "stream\t 'a type", "contents": "stream$0"},
+
+	// keyword
+	{ "trigger": "try\t keyword snippet", "contents": "try {\n$0\n}"},
+	{ "trigger": "catch\t keyword snippet", "contents": "catch {\n$0\n}"},
+	{ "trigger": "function\t keyword snippet", "contents": "function ${1:name}() {\n$0\n}"},
+	{ "trigger": "if\t keyword snippet", "contents": "if ${1:expr} then $0"},
+	{ "trigger": "match\t keyword snippet", "contents": "match ${1:expr} {\n$0\n}"},
+	{ "trigger": "exception\t keyword snippet", "contents": "exception ${1:Excp};$0"},
+	{ "trigger": "while\t keyword snippet", "contents": "while true {\n$0\n}"},
+	{ "trigger": "else\t keyword snippet", "contents": "else {\n$0\n}"},
+	{ "trigger": "then\t keyword snippet", "contents": "then {\n$0\n}"},
+	{ "trigger": "type\t keyword snippet", "contents": "type ${1:tpname} {\n$0\n}"},
+  ]
+}
