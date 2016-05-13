@@ -282,8 +282,11 @@ contexts:
     - match: '{{_BRACE_CLOSE}}'
       pop: true
     - include: ii_binop_colon
-    - match: '(\bmutable\b)\s+(\b{{_IDNET}}\b)'
-      scope: variable.parameter.mutable
+    - match: '(\bmutable)\s+({{_IDNET}}\b)'
+      captures:
+        1: support.type.mutable
+        2: type.record.field
+      scope:
     - match: '\b{{_MODIDENT}}\b'
       scope: type.variant
     - match: '\b{{_IDNET}}\b'
@@ -304,11 +307,36 @@ contexts:
      - meta_scope: def.function.args
      - match: '{{_BRACKETS_CLOSE}}'
        pop: true
+  #     set: def_function_ret_n_body
      - match: '\b{{_IDNET}}\b'
        scope: variable.parameter.name
      - match: '\b{{_MODIDENT}}\b'
        scope: invalid.illegal.def-function-args-name
      - include: main
+
+  # TODO
+  # def_function_ret_n_body:
+  #   - meta_scope: def.function.ret_n_body
+  #   - match: '{{_BRACE_OPEN}}'
+  #     set: def_function_body
+  #   # return type
+  #   - include: ii_binop_colon
+  #   - match: '(?=\S)'
+  #     set: def_function_body_line
+
+  # def_function_body:
+  #   - meta_scope: def.function.body
+  #   - match: '{{_BRACE_OPEN}}'
+  #     push: todo_brace
+  #   - match: '{{_BRACE_CLOSE}}'
+  #     pop: true
+  #   - include: main
+
+  # def_function_body_line:
+  #   - meta_scope: def.function.body_line
+  #   - match: '(?=;|{{_BRACE_CLOSE}}|{{_BRACKETS_CLOSE}})'
+  #     pop: true
+  #   - include: main
 
   block_comment:
     - meta_scope: comment.block
