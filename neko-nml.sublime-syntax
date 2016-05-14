@@ -92,7 +92,7 @@ contexts:
       scope: support.function.mod
       push: std_zip
 
-    - match: '\bSTACK\b'
+    - match: '\bStack\b'
       scope: support.function.mod
       push: std_stack
 
@@ -189,8 +189,12 @@ contexts:
     - match: '{{_BRACKETS_CLOSE}}'
       scope: invalid.illegal.brackets-end
 
-#   - match: '\[<|>]'
-#      scope: entity.name.function
+    - match: '\[<'
+      push:
+        - meta_scope: square.stream
+        - match: '>\]'
+          pop: true
+        - include: main
     # square brackets
     - match: '{{_SQUARE_OPEN}}'
       push: square
@@ -250,7 +254,7 @@ contexts:
     - match: '\.'
       scope: keyword.control.dot
 
-    - match: '\s{{_MODIDENT}}(?!\.)\b'
+    - match: '\b{{_MODIDENT}}(?!\.)\b'
       scope: entity.other.inherited-class
 
   double_quoted_string:
@@ -356,7 +360,7 @@ contexts:
     - match: '{{_BRACE_CLOSE}}'
       pop: true
     - match: '\|\|'
-    - match: '\|\s'
+    - match: '\|(?=\s)'
       scope: keyword.binop.vertical
     - include: main
 
@@ -364,7 +368,7 @@ contexts:
     - meta_scope: square.block
     - match: '{{_SQUARE_CLOSE}}'
       pop: true
-    - match: '(?=,)'
+    - match: ','
       scope: invalid.illegal.binop-comma
     - include: main
 
@@ -541,7 +545,7 @@ contexts:
       scope: support.function
 
   std_xml:
-    - meta_scope: std.net
+    - meta_scope: std.xml
     - include: dot2method
     - match: '\b(t|Error)\b'
       scope: support.type
@@ -572,8 +576,8 @@ contexts:
   std_set:
     - meta_scope: std.set
     - include: dot2method
-    # - match: '\b(set|t)\b'
-    #   scope: support.type
+    - match: '\bt\b'
+      scope: support.type
       # height|make|bal|remove_min_elt|min_elt|merge|add_loop|join|concat|split
     - match: '\b(add|create|empty|is_empty|exists|remove|union|inter|diff|iter)\b'
       scope: support.function
@@ -602,8 +606,8 @@ contexts:
   std_map:
     - meta_scope: std.map
     - include: dot2method
-    # - match: '\b(map|t)\b'
-    #   scope: support.type
+    - match: '\bt\b'
+      scope: support.type
     - match: '\b(create|empty|is_empty|add|find|remove|exists|iter|map|fold)\b'
       scope: support.function
 

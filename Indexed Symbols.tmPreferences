@@ -2,7 +2,7 @@
 <plist version="1.0">
 <dict>
 	<key>scope</key>
-	<string>var.name, function.name, exception.name, type.variant, type.record.field</string>
+	<string>var.name, function.name, exception.name, type.variant, type.record.field, type.name</string>
 	<key>settings</key>
 	<dict>
 		<key>showInIndexedSymbolList</key>
