@@ -28,3 +28,5 @@ Note: This is the first time I tried to write syntax definition, so it probably 
 * [hello nekml](https://github.com/R32/haxe-proj-template/tree/master/nml)
 
 * [CMake compile c/c++ as NDLL](https://github.com/R32/haxe-proj-template/tree/master/gcc) - `/ndll/CMakeLists.txt` - Only Test in MSVC 2013
+
+  ![screen shot](_darcs/screenshot.png)
