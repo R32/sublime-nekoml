@@ -1,0 +1,112 @@
+{
+  "scope": "source.neko",
+
+  "completions": [
+  	{ "trigger": "function\t keyword", "contents": "function() {\n\t$1\n}$0"},
+  	// ......
+  	{ "trigger": "exports\t special var", "contents": "exports$0"},
+  	{ "trigger": "goto(lable)\t", "contents": "goto(${1:label})$0"},
+
+  	// loader
+  	{ "trigger": "loader\t object", "contents": "loader$0"},
+  	{ "trigger": "loader_loadprim\t loader.loadprim", "contents": "loader.loadprim(\"std@${1:name}\", ${2:0})$0"},
+  	{ "trigger": "loader_loadmodule\t loader.loadmodule", "contents": "loader.loadmodule(\"${1:name}\", ${2:\\$loader})$0"},
+  //	{ "trigger": "loader_path\t array", "contents": "loader.path$0"},
+  //	{ "trigger": "loader_cache\t object", "contents": "loader.cache$0"},
+  //	{ "trigger": "loader_args\t array", "contents": "loader.args$0"},
+
+  	// array
+  	{ "trigger": "array(any): array", "contents": "array(${1:any})$0"},
+  	{ "trigger": "amake(n: int): array", "contents": "amake(${1:n})$0"},
+  	{ "trigger": "acopy(array): array", "contents": "acopy(${1:a})$0"},
+  	{ "trigger": "asize(array): int", "contents": "asize(${1:a})$0"},
+  	{ "trigger": "asub(array, p: int, len: int): array", "contents": "asub(${1:a}, ${2:p}, ${3:len})$0"},
+  	{ "trigger": "ablit(dst: array, dst_pos: int, src: array, src_pos:int, len: int): void"
+  		, "contents": "ablit(${1:dst}, ${2:dst_pos}, ${3:src}, ${4:src_pos}, ${5:len})$0"},
+  	{ "trigger": "aconcat(aa: array array): array", "contents": "aconcat(${1:aa})$0"},
+
+  	// string
+  	{ "trigger": "string(any): string", "contents": "string(${1:any})$0"},
+  	{ "trigger": "smake(n: int): string", "contents": "smake(${1:n})$0"},
+  	{ "trigger": "ssize(string): int", "contents": "ssize(${1:s})$0"},
+  	{ "trigger": "scopy(string): string", "contents": "scopy(${1:s})$0"},
+  	{ "trigger": "ssub(string, p: int, len: int): string", "contents": "ssub(${1:s}, ${2:p}, ${3:len})$0"},
+  	{ "trigger": "sget(string, p: int): ?int", "contents": "sget(${1:s}, ${2:p})$0"},
+  	{ "trigger": "sset(string, p: int, c: int): ?int", "contents": "sset(${1:s}, ${2:p}, ${3:c})$0"},
+  	{ "trigger": "sblit(dst: string, dst_pos: int, src: string, src_pos:int, len: int): void"
+  		,"contents": "sblit(${1:dst}, ${2:dst_pos}, ${3:src}, ${4:src_pos}, ${5:len})$0"},
+  	{ "trigger": "sfind(string, start: int, pat: string): int", "contents": "sfind(${1:s}, ${2:start}, ${3:pat})$0"},
+
+  	// object
+  	{ "trigger": "new(?object): object\t Return a copy of the object or a new object if null", "contents": "new(${1:null})$0"},
+  	{ "trigger": "objget(o: any, f:int): any", "contents": "objget(${1:o}, ${2:f})$0"},
+  	{ "trigger": "objset(o: any, f:int, v: any): any", "contents": "objset(${1:o}, ${2:f}, ${3:v})$0"},
+	{ "trigger": "objcall(o: any, f:int, args: array): any", "contents": "objcall(${1:o}, ${2:f}, ${3:a})$0"},
+  	{ "trigger": "objfield(o: any, f:int): bool", "contents": "objfield(${1:o}, ${2:f})$0"},
+  	{ "trigger": "objremove(object, f:int): bool", "contents": "objremove(${1:o}, ${2:f})$0"},
+  	{ "trigger": "objfields(object): int array", "contents": "objfields(${1:o})$0"},
+  	{ "trigger": "hash(string): int", "contents": "hash(${1:s})$0"},
+  	{ "trigger": "field(int): string", "contents": "field(${1:f})$0"},
+  	{ "trigger": "objsetproto(object, ?proto: object): void", "contents": "objsetproto(${1:o}, ${2:p})$0"},
+  	{ "trigger": "objgetproto(object): ?object", "contents": "objgetproto(${1:o})$0"},
+
+	// function
+  	{ "trigger": "nargs(function): int", "contents": "nargs(${1:fn})$0"},
+  	{ "trigger": "call(function, this: any, args: array): any", "contents": "call(${1:fn}, ${2:c}, ${3:a})$0"},
+  	{ "trigger": "closure(function, any*): function", "contents": "closure(${1:fn}, $2)$0"},
+  	{ "trigger": "apply(function, any*): any", "contents": "apply(${1:fn}, $2)$0"},
+  	{ "trigger": "varargs(f: function:1): function:-1", "contents": "varargs(${1:fn})$0"},
+
+  	// number
+  	{ "trigger": "iadd(int, int): int", "contents": "iadd(${1:a}, ${2:b})$0"},
+  	{ "trigger": "isub(int, int): int", "contents": "isub(${1:a}, ${2:b})$0"},
+  	{ "trigger": "imult(int, int): int", "contents": "imult(${1:a}, ${2:b})$0"},
+  	{ "trigger": "idiv(int, int): int", "contents": "idiv(${1:a}, ${2:b})$0"},
+  	{ "trigger": "isnan(any): bool", "contents": "isnan(${1:x})$0"},
+  	{ "trigger": "isinfinite(any): bool", "contents": "isinfinite(${1:x})$0"},
+  	{ "trigger": "int(any): ?int", "contents": "int(${1:x})$0"},
+  	{ "trigger": "float(any): ?float", "contents": "float(${1:x})$0"},
+
+  	// Abstract
+  	{ "trigger": "getkind('abstract): 'kind", "contents": "getkind(${1:ab})$0"},
+  	{ "trigger": "iskind(any, 'kind): bool", "contents": "iskind(${1:x}, ${2:k})$0"},
+
+  	// Hashtable
+  	{ "trigger": "hkey(any): int", "contents": "hkey(${1:x})$0"},
+  	{ "trigger": "hnew(s: int): 'hash", "contents": "hnew(${1:s})$0"},
+  	{ "trigger": "hresize('hash, int): void", "contents": "hresize(${1:h}, ${2:n})$0"},
+  	{ "trigger": "hget('hash, k: any, cmp: ?function:2): any", "contents": "hget(${1:h}, ${2:k}, ${3:cmp})$0"},
+  	{ "trigger": "hmem('hash, k: any, cmp: ?function:2): bool", "contents": "hmem(${1:h}, ${2:k}, ${3:cmp})$0"},
+  	{ "trigger": "hremove('hash, k: any, cmp: ?function:2): bool", "contents": "hremove(${1:h}, ${2:k}, ${3:cmp})$0"},
+  	{ "trigger": "hset('hash, k: any, v: any, cmp: ?function:2): bool", "contents": "hset(${1:h}, ${2:k}, ${3:v}, ${4:cmp})$0"},
+  	{ "trigger": "hadd('hash, k: any, v: any): void", "contents": "hadd(${1:h}, ${2:k}, ${3:v})$0"},
+  	{ "trigger": "hiter('hash, f: function:2): void", "contents": "hiter(${1:h}, ${2:f})$0"},
+  	{ "trigger": "hcount('hash): int", "contents": "hcount(${1:h})$0"},
+  	{ "trigger": "hsize('hash): int", "contents": "hsize(${1:h})$0"},
+
+  	// Other
+  	{ "trigger": "print(any*): void", "contents": "print(${1:x})$0"},
+  	{ "trigger": "throw(any): any", "contents": "throw(${1:x})$0"},
+  	{ "trigger": "rethrow(any): any", "contents": "rethrow(${1:x})$0"},
+  	{ "trigger": "istrue(any): bool", "contents": "istrue(${1:x})$0"},
+  	{ "trigger": "not(any): bool", "contents": "not(${1:x})$0"},
+  	{ "trigger": "typeof(any): int", "contents": "typeof(${1:x})$0"},
+  	{ "trigger": "compare(any, any): ?int", "contents": "compare(${1:x1}, ${2:x2})$0"},
+  	{ "trigger": "pcompare(any, any): int", "contents": "pcompare(${1:x1}, ${2:x2})$0"},
+  	{ "trigger": "excstack(): array", "contents": "excstack()$0"},
+  	{ "trigger": "callstack(): array", "contents": "callstack()$0"},
+  	{ "trigger": "version(): int", "contents": "version()$0"},
+  	{ "trigger": "setresolver(?f: function:2): void", "contents": "setresolver(${1:f})$0"},
+
+  	// typeof constrant
+  	{ "trigger": "tnull\t 0", "contents": "tnull$0"},
+  	{ "trigger": "tint\t 1", "contents": "tint$0"},
+  	{ "trigger": "tfloat\t 2", "contents": "tfloat$0"},
+  	{ "trigger": "tbool\t 3", "contents": "tbool$0"},
+  	{ "trigger": "tstring\t 4", "contents": "tstring$0"},
+  	{ "trigger": "tobject\t 5", "contents": "tobject$0"},
+  	{ "trigger": "tarray\t 6", "contents": "tarray$0"},
+  	{ "trigger": "tfunction\t 7", "contents": "tfunction$0"},
+  	{ "trigger": "tabstract\t 8", "contents": "tabstract$0"},
+  ]
+}

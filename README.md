@@ -7,7 +7,7 @@ Note: This is the first time I tried to write syntax definition, so it probably 
 
 * Syntax highlighting for `*.nml` file
 
-* Auto Completion(only core lib), _afasdfsa_
+* Auto Completion(only core lib)
 
   - Entirely by hand typing, Is very hard work, so there will be some typos
 
@@ -19,11 +19,17 @@ Note: This is the first time I tried to write syntax definition, so it probably 
 
      > `Menu -> Project -> Add Folder to Project...`
 
+* **NEW** `.neko` syntax hightlighting(Partial) and auto Completion(only for builtins)
+
+  - may need setting: `"auto_complete_triggers": [ ...,{"characters": "$", "selector": "source.neko"} ]`
+
 ### requirement
 
 * Sublime text 3 build 3103(2016-02-09) or newer. since a [new Syntax Definition file format](https://www.sublimetext.com/docs/3/syntax.html)
 
 ### misc
+
+* [neko template](https://github.com/R32/haxe-proj-template/tree/master/neko-native)
 
 * [hello nekml](https://github.com/R32/haxe-proj-template/tree/master/nml)
 

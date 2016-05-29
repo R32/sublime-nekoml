@@ -1,8 +1,8 @@
-%YAML1.2
+%YAML 1.2
 ---
 # See http://www.sublimetext.com/docs/3/syntax.html
 # color scope http://tmtheme-editor.herokuapp.com/#!/editor/theme/Monokai
-name: NEKO-NML
+name: NML
 file_extensions:
   - nml
 scope: source.nml

@@ -1,0 +1,119 @@
+%YAML 1.2
+---
+# See http://www.sublimetext.com/docs/3/syntax.html
+# http://tmtheme-editor.herokuapp.com/#!/editor/theme/Monokai
+name: NEKO
+file_extensions:
+  - neko
+scope: source.neko
+
+variables:
+  # http://nekovm.org/specs/syntax
+  _IDNET: '[a-zA-Z_@][a-zA-Z0-9_@]*'
+  _BINOP: '[!=*/<>&|^%+:-]+'
+
+contexts:
+  main:
+    - include: expressions
+
+  #
+  expressions:
+    - include: invalid-values
+    - include: comments
+    - include: lable
+    - include: constants
+    - include: keywords
+#    - include: round-brackets
+    - include: builtins
+    - include: dot2field
+  ##
+  comments:
+    - match: /\*
+      push:
+        - meta_scope: comment.block
+        - match: \*/
+          pop: true
+    - match: //
+      push:
+        - meta_scope: comment.line
+        - match: $
+          pop: true
+  ##
+  constants:
+    - match: '\b(true|false)\b'
+      scope: constant.character.boolean
+    - match: '\bnull\b'
+      scope: constant.character.null
+    - match: '\bthis\b'
+      scope: constant.character.this
+    - include: literal-number
+    - include: literal-string
+
+  ##
+  keywords:
+    - match: '\bvar\b'
+      scope: keyword.var
+      push:
+        # TODO: `var a = 1, b= 2...` is not supported yet
+        - meta_scope: var.left
+        - match: '\$'
+          scope: invalid.illegal.dollar
+        - match: '(?=;|=)'
+          pop: true
+        - match: '\b{{_IDNET}}\b'
+          scope: var.name
+          pop: true
+    - match: '\b(while|do|if|else|function|return|break|continue|default|try|catch|switch)\b'
+      scope: keyword
+  ##
+  builtins:
+    - match: '\b_\b'
+      scope: support.function.empty-expr
+    - match: '\${{_IDNET}}\b'
+      scope: support.function
+
+  dot2field:
+    - match: '\.{{_IDNET}}\b'
+      scope: support.function.sub  # color
+  ##
+  lable:
+    - match: '({{_IDNET}}):'
+      captures:
+        0: entity.name.lable
+        1: var.name  # for Goto Definetion
+  ##
+  round-brackets:
+    - match: \(
+      push:
+        - meta_scope: meta.round-brackets
+        - match: \)
+          pop: true
+        - include: expressions
+    - match: \)
+      scope: invalid.illegal.stray-bracket-end
+
+  ###
+  literal-number:
+    - match: '\b0x[0-9A-Fa-f]{1,8}\b'
+      scope: constant.numeric.hex
+    - match: '-?\b(?:[0-9]+)|(?:[0-9]+\.[0-9]*)|(?:\.[0-9]+)\b'
+      scope: constant.numeric
+
+  ###
+  literal-string:
+    - match: '"'
+      push:
+        - meta_scope: string.quoted.double
+        - match: '\\.'
+          scope: constant.character.escape
+        - match: '"'
+          scope: double_quoted.end
+          pop: true
+
+  invalid-values:
+    # TODO:  valid in .nml's neko("")
+    - match: "'"
+      scope: invalid.illegal.single-quotes
+    # \u3000
+    - match: '　'
+      scope: invalid.illegal.space-u3000
