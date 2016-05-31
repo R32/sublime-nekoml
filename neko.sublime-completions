@@ -108,5 +108,21 @@
   	{ "trigger": "tarray\t 6", "contents": "tarray$0"},
   	{ "trigger": "tfunction\t 7", "contents": "tfunction$0"},
   	{ "trigger": "tabstract\t 8", "contents": "tabstract$0"},
+
+    // neko 2.1.0
+    { "trigger": "sget16(string, p: int, bigEndian: bool): ?int", "contents": "sget16(${1:s}, ${2:p}, ${3:false})$0"},
+    { "trigger": "sset16(string, p: int, v: int, bigEndian: bool): void", "contents": "sset16(${1:s}, ${2:p}, ${3:v}, ${4:false})$0"},
+    { "trigger": "sget32(string, p: int, bigEndian: bool): ?int", "contents": "sget32(${1:s}, ${2:p}, ${3:false})$0"},
+    { "trigger": "sset32(string, p: int, v: int, bigEndian: bool): void", "contents": "sset32(${1:s}, ${2:p}, ${3:v}, ${4:false})$0"},
+    { "trigger": "sgetf(string, p: int, bigEndian: bool): ?float", "contents": "sgetf(${1:s}, ${2:p}, ${3:false})$0"},
+    { "trigger": "ssetf(string, p: int, v: float, bigEndian: bool): void", "contents": "ssetf(${1:s}, ${2:p}, ${3:f}, ${4:false})$0"},
+    { "trigger": "sgetd(string, p: int, bigEndian: bool): ?float", "contents": "sgetd(${1:s}, ${2:p}, ${3:false})$0"},
+    { "trigger": "ssetd(string, p: int, v: float, bigEndian: bool): void", "contents": "ssetd(${1:s}, ${2:p}, ${3:f}, ${4:false})$0"},
+
+    { "trigger": "itof(v: int, bigEndian: bool): float", "contents": "itof(${1:v}, ${2:false})$0"},
+    { "trigger": "itod(low: int, high: int, bigEndian: bool): float", "contents": "itod(${1:low}, ${2:high}, ${3:false})$0"},
+    { "trigger": "ftoi(f: float, bigEndian: bool): int", "contents": "ftoi(${1:f}, ${2:false})$0"},
+    { "trigger": "dtoi(v: float, out: int array, bigEndian: bool): void", "contents": "dtoi(${1:f}, ${2:out}, ${3:false})$0"},
+    { "trigger": "isbigendian(): bool", "contents": "isbigendian()$0"},
   ]
 }
