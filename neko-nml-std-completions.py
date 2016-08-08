@@ -195,7 +195,7 @@ NML_STD = {
 		("without_extension(s: string): string", "without_extension(${1:s})$0"),
 		("extension(s: string): string", "extension(${1:s})$0"),
 		("without_dir(s: string): string", "without_dir(${1:s})$0"),
-		("args(s: string): string array", "args()$0"),
+		("args(): string array", "args()$0"),
 		("exit(code: int): 'a", "exit(${1:0})$0"),
 		("exists(path: string): bool", "exists(${1:path})$0"),
 		("get_env(s: string): string option", "get_env(${1:key})$0"),
