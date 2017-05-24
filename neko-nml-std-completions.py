@@ -96,7 +96,7 @@ NML_STD = {
 		("file_read_char(f: file): char", "file_read_char(${1:f})$0"),
 		("file_write(f: file, s: string, pos: int, len:int): int", "file_write(${1:f}, ${2:str}, ${3:pos}, ${4:len})$0"),
 		("file_write_char(f: file, c: char): void", "file_write_char(${1:f}, ${2:c})$0"),
-		("file_open(f: file): void", "file_open(${1:f})$0"),
+		("file_flush(f: file): void", "file_flush(${1:f})$0"),
 
 		("file_input(f: file): input", "file_input(${1:f})$0"),
 		("read_file(path:string, bin: bool): input", "read_file(${1:path}, ${2:false})$0"),
